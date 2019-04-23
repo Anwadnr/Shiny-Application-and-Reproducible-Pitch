@@ -1,0 +1,90 @@
+Shiny App Pitch
+========================================================
+author: AwaDNR
+date: 4/23/2019
+autosize: true
+
+
+========================================================
+## Viewing Relationships between Wine Properties 
+
+In order to analyze varying intensity of wine attributes and how they relate and/or are affected by other attributes of the wine I have created an application to analyze wine traits based on user input. 
+
+This application uses user selections to filter down the data based on desired qualities. The results of the filtered data are presented in plot and table format. 
+
+Future directions could include using a dataset with similar attributes and include wine and vineyard names in order to find and purchase the desired wine.
+
+========================================================
+## Wine Data 
+
+The database that was used to create this application comes from the UCI Machine Learning Repository. I chose to limit the variables used in the application and have included in the application: 
+
+
+```{r echo = FALSE}
+library(ggplot2)
+library(dplyr)
+white_wine <- read.csv("winequality-white.csv", header = T, sep = ";") %>%
+                 mutate(Color = "White")
+ red_wine <- read.csv("winequality-red.csv", header = T, sep = ";") %>%
+                 mutate(Color = "Red")
+
+ wine <- bind_rows(white_wine, red_wine) %>%
+         filter(residual.sugar <= 40)
+
+ wine <- wine[,c(1,4,10,11,12,13)]
+```
+```{r}
+colnames(wine)
+```
+
+
+========================================================
+## Using the Application 
+
+In order to use the application first you must specify whether you would like to view white or red wines via a drop down list on the left hand side.
+
+After the color selection you can then specify a range of acceptable levels of Alcohol, Sulphates, and Fixed Acidity. By Default all wine qualities are selected, if you wish to adjust which quality rankings to see you must deselect the check boxes. 
+
+Every decision you make will change the plot and the table to accommodate your requests.  
+
+========================================================
+## Example 
+The default plot shows Residual Sugars and Alcohol relationship with quality shown as a color gradient. Selections are preset at White wine, Alcohol = 9:15, Sulphates = 0.30;1.0, and Fixed Acidity = 3:15. 
+
+```{r echo=FALSE, fig.height=5, fig.width=8, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(ggplot2)
+library(dplyr)
+
+white_wine <- read.csv("winequality-white.csv", header = T, sep = ";") %>%
+        mutate(Color = "White")
+red_wine <- read.csv("winequality-red.csv", header = T, sep = ";") %>%
+        mutate(Color = "Red")
+
+wine <- bind_rows(white_wine, red_wine) %>%
+        filter(residual.sugar <= 40)
+
+# Select columns to be used in the analysis
+wine <- wine[,c(1,4,10,11,12,13)]
+
+plot1 <- ggplot(data=wine, aes(x=alcohol, y = residual.sugar)) +
+        geom_point(aes(color = quality), alpha = 1, size = 2) +
+        geom_smooth(method = "lm",
+                    formula = y~x) +
+        scale_colour_gradient(low = "purple", high = "yellow")
+
+plot(plot1)
+
+```
+
+========================================================
+## Data
+
+Link to Wine Quality Shiny Application:
+https://pandee.shinyapps.io/Course9Proj3/
+
+Access the dataset: 
+http://archive.ics.uci.edu/ml/datasets/Wine+Quality?ref=datanews.io
+
+```{r fig.height=2, fig.width=4, message=FALSE, warning=FALSE, paged.print=FALSE, echo = FALSE}
+head(wine, 3)
+```
